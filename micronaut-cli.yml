@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: se09.device.service
+---
+testFramework: kotlintest
+sourceLanguage: kotlin
