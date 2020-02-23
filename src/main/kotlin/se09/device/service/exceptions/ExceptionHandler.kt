@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 class OutOfStockExceptionHandler : ExceptionHandler<Exception?, HttpResponse<Any>> {
 
     override fun handle(request: HttpRequest<Any>, exception: Exception?): HttpResponse<Any> {
+        println(exception)
         return HttpResponse.serverError()
     }
 

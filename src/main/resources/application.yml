@@ -3,11 +3,16 @@ micronaut:
     name: se09-device-service
   server:
     port: 8090
+  http:
+    services:
+      vault:
+        urls:
+          - ${VAULT_URL}
 datasources:
   default:
-    url: 'jdbc:postgresql://localhost:5432/device-service'
-    username: 'postgres'
-    password: 'postgres'
+    url: ${POSTGRES_HOST}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driverClassName: 'org.postgresql.Driver'
     hikari:
       connection-timeout: 10000
@@ -20,7 +25,7 @@ jpa:
       hibernate:
         hbm2ddl:
           auto: none
-        show_sql: true
+        #show_sql: true
 flyway:
   datasources:
     default:

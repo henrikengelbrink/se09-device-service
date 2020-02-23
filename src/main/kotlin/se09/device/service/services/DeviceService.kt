@@ -7,11 +7,6 @@ import se09.device.service.repositories.DeviceCertificateRepository
 import se09.device.service.repositories.DeviceRepository
 import se09.device.service.ws.VaultService
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.util.*
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 import javax.inject.Inject
 
 

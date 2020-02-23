@@ -1,0 +1,7 @@
+# Environment variables:
+
+- POSTGRES_HOST
+- POSTGRES_USER
+- POSTGRES_PASSWORD
+- VAULT_URL
+- PORT

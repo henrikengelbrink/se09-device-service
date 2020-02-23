@@ -11,12 +11,12 @@ import javax.inject.Singleton
 
 @Singleton
 class VaultService(
-        @Client("http://localhost:8200")
+        @Client("vault")
         @Inject val httpClient: RxHttpClient
 ) {
 
     fun generateCertificate(clientId: String): VaultCertResponseDTO {
-
+        println("generateCertificate")
         val ttlSeconds = 2181246468 - Instant.now().epochSecond
         val hours = ttlSeconds / 3600
 
@@ -30,7 +30,6 @@ class VaultService(
         val response = httpClient.toBlocking().retrieve(request)
         println(response)
         val jsonResponse = Klaxon().parse<VaultCertResponseDTO>(response)
-        println(jsonResponse)
         return jsonResponse!!
     }
 
