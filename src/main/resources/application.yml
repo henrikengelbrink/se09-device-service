@@ -3,6 +3,7 @@ micronaut:
     name: se09-device-service
   server:
     port: 9090
+    host: localhost
   http:
     services:
       vault:
