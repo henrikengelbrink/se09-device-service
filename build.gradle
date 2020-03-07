@@ -39,8 +39,8 @@ dependencies {
     implementation "io.micronaut.data:micronaut-data-hibernate-jpa:1.0.0"
     implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
     runtime 'org.postgresql:postgresql:42.2.4'
-    compile 'io.micronaut.configuration:micronaut-flyway'
-    compile 'io.micronaut:micronaut-http-client'
+    implementation 'io.micronaut.configuration:micronaut-flyway'
+    implementation 'io.micronaut:micronaut-http-client'
     implementation 'com.beust:klaxon:5.0.1'
 
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
