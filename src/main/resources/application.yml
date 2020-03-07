@@ -11,6 +11,7 @@ micronaut:
 datasources:
   default:
     url: ${POSTGRES_HOST}
+    port: ${POSTGRES_PASSWORD}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driverClassName: 'org.postgresql.Driver'
