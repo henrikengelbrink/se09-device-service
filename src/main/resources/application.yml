@@ -2,7 +2,7 @@ micronaut:
   application:
     name: se09-device-service
   server:
-    port: 9090
+    port: 9191
     host: localhost
   http:
     services:
