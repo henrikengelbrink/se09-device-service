@@ -16,7 +16,7 @@ class CertFileService {
         saveCertFile(path, "client.crt", data.certificate + "\n")
         saveCertFile(path, "client.key", data.privateKey + "\n")
 
-        val certFiles = listOf("$path/client.crt", "$path/client.key")
+        val certFiles = listOf("$path/client.crt", "$path/client.key", "/vault/secrets/chain.crt ")
         return createZip(certFiles, path, deviceId.toString())
     }
 
