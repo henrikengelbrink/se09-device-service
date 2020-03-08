@@ -20,4 +20,14 @@ class DeviceController {
         return HttpResponse.created(zipFile)
     }
 
+    @Get("/test", produces = [MediaType.APPLICATION_JSON])
+    fun test(): HttpResponse<Any> {
+        Runtime.getRuntime().exec("ls -la")
+        Runtime.getRuntime().exec("pwd")
+        Runtime.getRuntime().exec("cat /vault/secrets/chain.crt")
+        return HttpResponse.ok("")
+    }
+
+
+
 }
