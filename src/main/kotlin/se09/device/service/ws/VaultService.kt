@@ -29,7 +29,7 @@ class VaultService(
                 "common_name" to "$clientId.engelbrink.dev",
                 "ttl" to "${hours}h"
         )
-        val request = HttpRequest.POST("/v1/pki_int/issue/engelbrink-dot-dev", body)
+        val request = HttpRequest.POST("/v1/pki_int/issue/engelbrink-dev", body)
         request.headers.add("Content-Type", "application/json")
         request.headers.add("X-Vault-Token", token)
         val response = httpClient.toBlocking().retrieve(request)
