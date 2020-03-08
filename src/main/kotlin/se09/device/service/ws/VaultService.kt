@@ -21,6 +21,7 @@ class VaultService(
     fun generateCertificate(clientId: String): VaultCertResponseDTO {
         println("generateCertificate")
         val token = getVaultToken()
+        println("######### VAULT TOKEN $token")
         val ttlSeconds = 2181246468 - Instant.now().epochSecond
         val hours = ttlSeconds / 3600
 
