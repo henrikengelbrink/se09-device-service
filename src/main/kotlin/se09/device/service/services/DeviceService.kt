@@ -97,8 +97,11 @@ class DeviceService {
     fun credentialsValid(dto: VerneMQRegisterDTO): Boolean {
         val deviceId = dto.username.substringBefore(".engelbrink.dev")
         LOG.info("deviceId $deviceId")
+        LOG.info("client_id ${dto.client_id}")
+        val clientIdUUID = UUID.fromString(dto.client_id)
+        LOG.info("clientIdUUID $clientIdUUID")
 
-        val userDeviceOptional = userDeviceRepository.findById(UUID.fromString(dto.client_id))
+        val userDeviceOptional = userDeviceRepository.findById(clientIdUUID)
         if (!userDeviceOptional.isPresent) {
             return false
         }
