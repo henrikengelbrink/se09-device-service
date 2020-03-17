@@ -19,8 +19,8 @@ class DeviceController {
     @Inject
     private lateinit var deviceService: DeviceService
 
-   @Inject
-   private lateinit var userService: UserService
+    @Inject
+    private lateinit var userService: UserService
 
     @Get(produces = [MediaType.APPLICATION_JSON])
     fun createDevice(): HttpResponse<SystemFile> {
