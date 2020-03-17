@@ -2,6 +2,8 @@ package se09.device.service.services
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import io.micronaut.http.server.types.files.SystemFile
+import se09.device.service.dto.UserDeviceDTO
+import se09.device.service.dto.VerneMQRegisterDTO
 import se09.device.service.models.Device
 import se09.device.service.models.DeviceCertificate
 import se09.device.service.models.UserDevice
@@ -65,7 +67,7 @@ class DeviceService {
         return SystemFile(zipFile).attach("${device.id}.zip")
     }
 
-    fun claimUserDevice(userId: String, deviceId: String): String {
+    fun claimUserDevice(userId: String, deviceId: String): UserDeviceDTO {
         val uuidUser = UUID.fromString(userId)
         val uuidDevice = UUID.fromString(deviceId)
         val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = uuidDevice, userId = uuidUser)
@@ -81,7 +83,25 @@ class DeviceService {
                 hashedPassword = hashedPassword
         )
         userDeviceRepository.save(newUserDevice)
-        return password
+        return UserDeviceDTO(
+                userDeviceId = newUserDevice.id.toString(),
+                password = password
+        )
+    }
+
+    fun credentialsValid(dto: VerneMQRegisterDTO): Boolean {
+        val deviceId = dto.username.substringBefore(".engelbrink.dev")
+
+        val userDeviceOptional = userDeviceRepository.findById(UUID.fromString(dto.client_id))
+        if (!userDeviceOptional.isPresent) {
+            return false
+        }
+        val userDevice = userDeviceOptional.get()
+        if (userDevice.deviceId.toString() != deviceId) {
+            return false
+        }
+        val result: BCrypt.Result = BCrypt.verifyer().verify(dto.password.toCharArray(), userDevice.hashedPassword)
+        return result.verified
     }
 
 }

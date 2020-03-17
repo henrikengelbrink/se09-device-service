@@ -1,18 +1,38 @@
 package se09.device.service.controller
 
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
+import io.micronaut.http.server.types.files.SystemFile
+import se09.device.service.dto.VerneMQRegisterDTO
+import se09.device.service.services.DeviceService
+import javax.inject.Inject
 
 @Controller("/vernemq")
 class VerneMQController {
 
+    @Inject
+    private lateinit var deviceService: DeviceService
+
     @Post("/auth_on_register", produces = [MediaType.APPLICATION_JSON])
-    fun authOnRegister(@Body body: Map<String, Any>): Map<String, Any> {
-        println("auth_on_register -> $body")
-        return mapOf("result" to "ok")
-        //return mapOf("result" to mapOf("error" to "not_allowed"))
+    fun authOnRegister(@Body dto: VerneMQRegisterDTO): HttpResponse<Map<String, Any>> {
+        println("auth_on_register -> ${dto.username}")
+        if (deviceService.credentialsValid(dto)) {
+            return HttpResponse.ok(
+                    mapOf(
+                            "result" to "ok"
+                    )
+            )
+        } else {
+            return HttpResponse.ok(
+                    mapOf(
+                            "result" to mapOf(
+                                    "error" to "not_allowed")
+                    )
+            )
+        }
     }
 
     @Post("/auth_on_subscribe", produces = [MediaType.APPLICATION_JSON])

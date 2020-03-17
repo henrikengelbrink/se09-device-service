@@ -6,6 +6,7 @@ import io.micronaut.http.annotation.*
 import io.micronaut.http.server.types.files.SystemFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import se09.device.service.dto.UserDeviceDTO
 import se09.device.service.services.DeviceService
 import se09.device.service.ws.UserService
 import javax.inject.Inject
@@ -33,15 +34,12 @@ class DeviceController {
             @PathVariable deviceId: String,
             @Header(value = "Authorization") authHeader: String
             //@Header(value = "X-User-Id") userId: String
-    ): HttpResponse<Any> {
+    ): HttpResponse<UserDeviceDTO> {
         val token = authHeader.substringAfter(" ")
         val userId = userService.getUserIdFromToken(token)
-        val password = deviceService.claimUserDevice(userId, deviceId)
+        val userDeviceDTO = deviceService.claimUserDevice(userId, deviceId)
         LOG.warn("########### claimDevice $deviceId")
-        val responseBody = mapOf(
-                "password" to password
-        )
-        return HttpResponse.ok(responseBody)
+        return HttpResponse.ok(userDeviceDTO)
     }
 
 }
