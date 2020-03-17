@@ -2,6 +2,9 @@ package se09.device.service.services
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import io.micronaut.http.server.types.files.SystemFile
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import se09.device.service.controller.VerneMQController
 import se09.device.service.dto.UserDeviceDTO
 import se09.device.service.dto.VerneMQRegisterDTO
 import se09.device.service.models.Device
@@ -19,6 +22,8 @@ import javax.inject.Inject
 
 
 class DeviceService {
+
+    private val LOG: Logger = LoggerFactory.getLogger(DeviceService::class.java)
 
     @Inject
     private lateinit var deviceRepository: DeviceRepository
@@ -91,16 +96,23 @@ class DeviceService {
 
     fun credentialsValid(dto: VerneMQRegisterDTO): Boolean {
         val deviceId = dto.username.substringBefore(".engelbrink.dev")
+        LOG.info("deviceId $deviceId")
 
         val userDeviceOptional = userDeviceRepository.findById(UUID.fromString(dto.client_id))
         if (!userDeviceOptional.isPresent) {
             return false
         }
         val userDevice = userDeviceOptional.get()
+        LOG.info("userDevice.id ${userDevice.id}")
+        LOG.info("userDevice.deviceId ${userDevice.deviceId}")
+        LOG.info("userDevice.userId ${userDevice.userId}")
+        LOG.info("userDevice.hashedPassword ${userDevice.hashedPassword}")
         if (userDevice.deviceId.toString() != deviceId) {
             return false
         }
+        LOG.info("PRE ###")
         val result: BCrypt.Result = BCrypt.verifyer().verify(dto.password.toCharArray(), userDevice.hashedPassword)
+        LOG.info("POST $result.verified")
         return result.verified
     }
 
