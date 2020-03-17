@@ -12,12 +12,12 @@ import javax.inject.Singleton
 @Singleton
 class CertFileService {
 
-    fun compressCertsToZipFile(path: String, data: VaultCertResponseDataDTO, deviceId: UUID): File {
+    fun compressCertsToZipFile(path: String, data: VaultCertResponseDataDTO, deviceId: String): File {
         saveCertFile(path, "client.crt", data.certificate + "\n")
         saveCertFile(path, "client.key", data.privateKey + "\n")
 
         val certFiles = listOf("$path/client.crt", "$path/client.key", "/vault/secrets/chain.crt")
-        return createZip(certFiles, path, deviceId.toString())
+        return createZip(certFiles, path, deviceId)
     }
 
     private fun createZip(files: List<String>, path: String, fileName: String): File {

@@ -6,4 +6,4 @@ import se09.device.service.models.Device
 import java.util.*
 
 @Repository
-interface DeviceRepository : CrudRepository<Device, UUID>
+interface DeviceRepository : CrudRepository<Device, String>

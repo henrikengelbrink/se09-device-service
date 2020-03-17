@@ -7,7 +7,7 @@ import javax.persistence.*
 @Table(name = "device_certificates")
 class DeviceCertificate(
         @Column(name = "device_id")
-        val deviceId: UUID,
+        val deviceId: String,
 
         @Column(name = "request_id")
         val requestId: String,

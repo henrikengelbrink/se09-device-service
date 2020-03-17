@@ -6,8 +6,8 @@ import se09.device.service.models.UserDevice
 import java.util.*
 
 @Repository
-interface UserDeviceRepository : CrudRepository<UserDevice, UUID> {
+interface UserDeviceRepository : CrudRepository<UserDevice, String> {
 
-    fun findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId: UUID, userId: UUID): UserDevice?
+    fun findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId: String, userId: String): UserDevice?
 
 }

@@ -1,16 +1,15 @@
 package se09.device.service.models
 
-import java.util.*
 import javax.persistence.*
 
 @Entity
 @Table(name = "user_devices")
 class UserDevice(
         @Column(name = "device_id")
-        val deviceId: UUID,
+        val deviceId: String,
 
         @Column(name = "user_id")
-        val userId: UUID,
+        val userId: String,
 
         @Column(name = "hashed_password")
         val hashedPassword: String

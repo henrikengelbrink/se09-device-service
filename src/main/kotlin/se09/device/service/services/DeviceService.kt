@@ -4,7 +4,6 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import io.micronaut.http.server.types.files.SystemFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import se09.device.service.controller.VerneMQController
 import se09.device.service.dto.UserDeviceDTO
 import se09.device.service.dto.VerneMQRegisterDTO
 import se09.device.service.models.Device
@@ -17,7 +16,6 @@ import se09.device.service.utils.RandomPassword
 import se09.device.service.ws.VaultService
 import java.io.File
 import java.time.Instant
-import java.util.*
 import javax.inject.Inject
 
 
@@ -73,9 +71,7 @@ class DeviceService {
     }
 
     fun claimUserDevice(userId: String, deviceId: String): UserDeviceDTO {
-        val uuidUser = UUID.fromString(userId)
-        val uuidDevice = UUID.fromString(deviceId)
-        val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = uuidDevice, userId = uuidUser)
+        val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = deviceId, userId = userId)
         if (userDevice != null) {
             userDevice.deletedAt = Instant.now()
             userDeviceRepository.save(userDevice)
@@ -83,13 +79,13 @@ class DeviceService {
         val password = RandomPassword.randomPassword(20)
         val hashedPassword: String = BCrypt.withDefaults().hashToString(12, password.toCharArray())
         val newUserDevice = UserDevice(
-                userId = uuidUser,
-                deviceId = uuidDevice,
+                userId = userId,
+                deviceId = deviceId,
                 hashedPassword = hashedPassword
         )
         userDeviceRepository.save(newUserDevice)
         return UserDeviceDTO(
-                userDeviceId = newUserDevice.id.toString(),
+                userDeviceId = newUserDevice.id,
                 password = password
         )
     }
@@ -98,10 +94,8 @@ class DeviceService {
         val deviceId = dto.username.substringBefore(".engelbrink.dev")
         LOG.info("deviceId $deviceId")
         LOG.info("client_id ${dto.client_id}")
-        val clientIdUUID = UUID.fromString(dto.client_id)
-        LOG.info("clientIdUUID $clientIdUUID")
 
-        val userDeviceOptional = userDeviceRepository.findById(clientIdUUID)
+        val userDeviceOptional = userDeviceRepository.findById(dto.client_id)
         if (!userDeviceOptional.isPresent) {
             return false
         }
