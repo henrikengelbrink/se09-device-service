@@ -21,22 +21,29 @@ class VerneMQController {
     private lateinit var deviceService: DeviceService
 
     @Post("/auth_on_register", produces = [MediaType.APPLICATION_JSON])
-    fun authOnRegister(@Body dto: VerneMQRegisterDTO): HttpResponse<Map<String, Any>> {
-        LOG.info("auth_on_register -> ${dto.username}")
-        if (deviceService.credentialsValid(dto)) {
-            return HttpResponse.ok(
-                    mapOf(
-                            "result" to "ok"
-                    )
-            )
-        } else {
-            return HttpResponse.ok(
-                    mapOf(
-                            "result" to mapOf(
-                                    "error" to "not_allowed")
-                    )
-            )
-        }
+    fun authOnRegister(@Body dto: Map<String, Any>): HttpResponse<Map<String, Any>> {
+    //fun authOnRegister(@Body dto: VerneMQRegisterDTO): HttpResponse<Map<String, Any>> {
+        LOG.info("auth_on_register")
+        println(dto)
+        return HttpResponse.ok(
+                mapOf(
+                        "result" to "ok"
+                )
+        )
+//        if (deviceService.credentialsValid(dto)) {
+//            return HttpResponse.ok(
+//                    mapOf(
+//                            "result" to "ok"
+//                    )
+//            )
+//        } else {
+//            return HttpResponse.ok(
+//                    mapOf(
+//                            "result" to mapOf(
+//                                    "error" to "not_allowed")
+//                    )
+//            )
+//        }
     }
 
     @Post("/auth_on_subscribe", produces = [MediaType.APPLICATION_JSON])
