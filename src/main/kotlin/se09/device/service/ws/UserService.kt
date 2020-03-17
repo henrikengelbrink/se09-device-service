@@ -35,7 +35,9 @@ class UserService {
         LOG.info("getUserIdFromToken 333")
         val responseDTO = response.body()!!
         LOG.info("getUserIdFromToken 444")
-        return responseDTO.header.get(" X-User-Id") as String
+        val userId = responseDTO.header.get("X-User-Id") as String
+        LOG.info("getUserIdFromToken 555 $userId")
+        return userId
     }
 
 }
