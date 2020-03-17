@@ -6,13 +6,13 @@ import javax.persistence.*
 @Table(name = "user_devices")
 class UserDevice(
         @Column(name = "device_id")
-        val deviceId: String,
+        val deviceId: String = "",
 
         @Column(name = "user_id")
-        val userId: String,
+        val userId: String = "",
 
         @Column(name = "hashed_password")
-        val hashedPassword: String
+        val hashedPassword: String = ""
 ): BaseEntity() {
         @Enumerated(EnumType.STRING)
         val status: DeviceStatus = DeviceStatus.ACTIVE
