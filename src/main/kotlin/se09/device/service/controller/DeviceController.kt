@@ -1,15 +1,14 @@
 package se09.device.service.controller
 
 import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.MediaType
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Header
-import io.micronaut.http.annotation.Put
+import io.micronaut.http.annotation.*
 import io.micronaut.http.server.types.files.SystemFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import se09.device.service.services.DeviceService
+import se09.device.service.ws.UserService
 import javax.inject.Inject
 
 @Controller("/devices")
@@ -20,6 +19,9 @@ class DeviceController {
     @Inject
     private lateinit var deviceService: DeviceService
 
+   @Inject
+   private lateinit var userService: UserService
+
     @Get(produces = [MediaType.APPLICATION_JSON])
     fun createDevice(): HttpResponse<SystemFile> {
         LOG.warn("########### createDevice")
@@ -27,13 +29,18 @@ class DeviceController {
         return HttpResponse.created(zipFile)
     }
 
-    @Put(produces = [MediaType.APPLICATION_JSON])
+    @Put(value = "/{deviceId}", produces = [MediaType.APPLICATION_JSON])
     fun claimDevice(
-            @Header(value = "X-User-Id") userId: String
+            @PathVariable deviceId: String,
+            @Header(value = "Authorization") authHeader: String
+            //@Header(value = "X-User-Id") userId: String
     ): HttpResponse<Any> {
-        LOG.warn("########### claimDevice $userId")
+        val token = authHeader.substringAfter(" ")
+        val userId = userService.getUserIdFromToken(token)
+        val password = deviceService.claimUserDevice(userId, deviceId)
+        LOG.warn("########### claimDevice $deviceId")
         val responseBody = mapOf(
-                "password" to "1234567890"
+                "password" to password
         )
         return HttpResponse.ok(responseBody)
     }

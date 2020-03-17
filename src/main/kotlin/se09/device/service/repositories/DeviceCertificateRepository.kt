@@ -6,6 +6,4 @@ import se09.device.service.models.DeviceCertificate
 import java.util.*
 
 @Repository
-interface DeviceCertificateRepository : CrudRepository<DeviceCertificate, UUID> {
-
-}
+interface DeviceCertificateRepository : CrudRepository<DeviceCertificate, UUID>

@@ -29,3 +29,7 @@ flyway:
   datasources:
     default:
       locations: classpath:databasemigrations
+
+user:
+  service:
+    url: ${USER_SERVICE_URL}
