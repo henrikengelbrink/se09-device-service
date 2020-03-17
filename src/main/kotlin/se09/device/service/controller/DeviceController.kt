@@ -1,7 +1,6 @@
 package se09.device.service.controller
 
 import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.*
 import io.micronaut.http.server.types.files.SystemFile
@@ -29,7 +28,7 @@ class DeviceController {
         return HttpResponse.created(zipFile)
     }
 
-    @Put(value = "/{deviceId}", produces = [MediaType.APPLICATION_JSON])
+    @Post(value = "/{deviceId}", produces = [MediaType.APPLICATION_JSON])
     fun claimDevice(
             @PathVariable deviceId: String,
             @Header(value = "Authorization") authHeader: String

@@ -21,23 +21,17 @@ class UserService {
     fun getUserIdFromToken(token: String): String {
         LOG.info("getUserIdFromToken")
         val httpClient = RxHttpClient.create(URL(userServiceUrl))
-        LOG.info("getUserIdFromToken 111")
         val payload = AuthenticationSessionDTO(
                 subject = token,
                 extra = mutableMapOf(),
                 header = mutableMapOf()
         )
-        LOG.info("getUserIdFromToken 222")
         val response = httpClient.toBlocking().exchange(
                 POST("/auth/hydrator", payload).contentType(MediaType.APPLICATION_JSON),
                 AuthenticationSessionDTO::class.java
         )
-        LOG.info("getUserIdFromToken 333")
         val responseDTO = response.body()!!
-        LOG.info("getUserIdFromToken 444")
-        val userId = responseDTO.header.get("X-User-Id") as String
-        LOG.info("getUserIdFromToken 555 $userId")
-        return userId
+        return responseDTO.header.get("X-User-Id") as String
     }
 
 }

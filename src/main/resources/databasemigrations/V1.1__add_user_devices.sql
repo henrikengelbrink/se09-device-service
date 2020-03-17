@@ -1,7 +1,7 @@
 CREATE TABLE user_devices (
     id uuid NOT NULL PRIMARY KEY,
     status text NOT NULL DEFAULT 'ACTIVE',
-    user_id text NOT NULL,
+    user_id uuid NOT NULL,
     device_id uuid NOT NULL,
     hashed_password text NOT NULL,
     deleted_at TIMESTAMP,
