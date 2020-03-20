@@ -1,19 +1,18 @@
 package se09.device.service.models
 
-import java.util.*
 import javax.persistence.*
 
 @Entity
 @Table(name = "device_certificates")
 class DeviceCertificate(
         @Column(name = "device_id")
-        val deviceId: String,
+        val deviceId: String = "",
 
         @Column(name = "request_id")
-        val requestId: String,
+        val requestId: String = "",
 
         @Column(name = "serial_number")
-        val serialNumber: String,
+        val serialNumber: String = "",
 
-        val expiration: Float
+        val expiration: Float = 0.0F
 ): BaseEntity()
