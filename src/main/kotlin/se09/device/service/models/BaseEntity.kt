@@ -10,8 +10,8 @@ abstract class BaseEntity {
 
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @GeneratedValue
-    open lateinit var id: String
+    @GeneratedValue(generator = "uuid")
+    var id: String = ""
 
     @Column(name = "updated_at")
     open var updatedAt: Instant = Instant.now()
