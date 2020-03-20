@@ -8,7 +8,7 @@ CREATE TABLE devices (
 
 CREATE TABLE device_certificates (
     id text NOT NULL PRIMARY KEY,
-    device_id uuid NOT NULL,
+    device_id text NOT NULL,
     request_id text NOT NULL,
     serial_number text NOT NULL,
     expiration float NOT NULL,
