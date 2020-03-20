@@ -4,7 +4,6 @@ import se09.device.service.dto.VaultCertResponseDataDTO
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.inject.Singleton

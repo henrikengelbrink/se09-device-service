@@ -41,7 +41,7 @@ class DeviceService {
     fun createDevice(): SystemFile {
         var device = Device()
         device = this.deviceRepository.save(device)
-        val certDTO = vaultService.generateCertificate(device.id.toString())
+        val certDTO = vaultService.generateCertificate(device.id)
 
         val path = "/tmp/${device.id}"
         val file = File(path)

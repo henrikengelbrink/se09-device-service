@@ -1,16 +1,19 @@
 package se09.device.service.models
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.Type
 import java.time.Instant
-import java.util.*
 import javax.persistence.*
 
 @MappedSuperclass
 abstract class BaseEntity {
 
     @Id
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue
-    var id: String = UUID.randomUUID().toString()
+    @Type(type="pg-uuid")
+    open lateinit var id: String
 
     @Column(name = "updated_at")
     open var updatedAt: Instant = Instant.now()
