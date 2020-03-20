@@ -71,19 +71,29 @@ class DeviceService {
     }
 
     fun claimUserDevice(userId: String, deviceId: String): UserDeviceDTO {
+        LOG.warn("claimUserDevice")
         val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = deviceId, userId = userId)
+        LOG.warn("userDevice ${userDevice?.id}")
         if (userDevice != null) {
+            LOG.warn("userDevice ${userDevice.id} DELETE")
             userDevice.deletedAt = Instant.now()
+            LOG.warn("userDevice ${userDevice.id} date set")
             userDeviceRepository.save(userDevice)
+            LOG.warn("userDevice ${userDevice.id} DELETED !!!!")
         }
+        LOG.warn("userDevice PREEEE")
         val password = RandomPassword.randomPassword(20)
+        LOG.warn("userDevice $password")
         val hashedPassword: String = BCrypt.withDefaults().hashToString(12, password.toCharArray())
+        LOG.warn("hashedPassword $hashedPassword")
         val newUserDevice = UserDevice(
                 userId = userId,
                 deviceId = deviceId,
                 hashedPassword = hashedPassword
         )
+        LOG.warn("newUserDevice ${newUserDevice.id}")
         userDeviceRepository.save(newUserDevice)
+        LOG.warn("newUserDevice saved")
         return UserDeviceDTO(
                 userDeviceId = newUserDevice.id,
                 password = password
