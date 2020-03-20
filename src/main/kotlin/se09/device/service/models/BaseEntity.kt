@@ -9,6 +9,7 @@ import javax.persistence.*
 abstract class BaseEntity {
 
     @Id
+    @GeneratedValue
     var id: String = UUID.randomUUID().toString()
 
     @Column(name = "updated_at")
