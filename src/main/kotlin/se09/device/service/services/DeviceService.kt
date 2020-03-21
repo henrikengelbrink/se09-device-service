@@ -74,21 +74,30 @@ class DeviceService {
     fun claimUserDevice(userId: String, deviceId: String): UserDeviceDTO {
         LOG.warn("claimUserDevice")
         val deviceUUID = UUID.fromString(deviceId)
+        LOG.warn("device $deviceId - $deviceUUID")
         val userUUID = UUID.fromString(userId)
+        LOG.warn("user $userId - $userUUID")
         val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = deviceUUID, userId = userUUID)
         if (userDevice != null) {
-            userDevice.deletedAt = Instant.now()
-            userDevice.status = DeviceStatus.INVALID
-            userDeviceRepository.save(userDevice)
+            if (userDevice.userId.toString() != userId) {
+                throw Exception()
+            } else {
+                userDevice.deletedAt = Instant.now()
+                userDevice.status = DeviceStatus.INVALID
+                userDeviceRepository.save(userDevice)
+            }
+
         }
+        LOG.warn("deleted user")
         val password = RandomPassword.randomPassword(20)
         val hashedPassword: String = BCrypt.withDefaults().hashToString(12, password.toCharArray())
-        val newUserDevice = UserDevice(
+        var newUserDevice = UserDevice(
                 userId = userUUID,
                 deviceId = deviceUUID,
                 hashedPassword = hashedPassword
         )
-        userDeviceRepository.save(newUserDevice)
+        newUserDevice = userDeviceRepository.save(newUserDevice)
+        LOG.warn("newUserDevice ${newUserDevice.userId} - ${newUserDevice.deviceId} - ${newUserDevice.id}")
         return UserDeviceDTO(
                 userDeviceId = newUserDevice.id.toString(),
                 password = password
