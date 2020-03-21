@@ -79,7 +79,7 @@ class DeviceService {
         LOG.warn("user $userId - $userUUID")
         val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = deviceUUID, userId = userUUID)
         if (userDevice != null) {
-            LOG.warn("userDevice ${userDevice.id}")
+            LOG.warn("userDevice ${userDevice.id} - ${userDevice.userId} - ${userDevice.deviceId}")
             if (userDevice.userId.toString() != userId) {
                 throw Exception()
             } else {
