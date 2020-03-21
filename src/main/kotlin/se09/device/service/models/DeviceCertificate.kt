@@ -7,7 +7,7 @@ import javax.persistence.*
 @Table(name = "device_certificates")
 class DeviceCertificate(
         @Column(name = "device_id")
-        open var deviceId: UUID,
+        var deviceId: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
 
         @Column(name = "request_id")
         val requestId: String = "",

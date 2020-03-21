@@ -7,10 +7,10 @@ import javax.persistence.*
 @Table(name = "user_devices")
 class UserDevice(
         @Column(name = "device_id")
-        open var deviceId: UUID,
+        var deviceId: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
 
         @Column(name = "user_id")
-        open var userId: UUID,
+        var userId: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
 
         @Column(name = "hashed_password")
         val hashedPassword: String = ""
