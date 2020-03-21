@@ -8,6 +8,6 @@ import java.util.*
 @Repository
 interface UserDeviceRepository : CrudRepository<UserDevice, String> {
 
-    fun findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId: String, userId: String): UserDevice?
+    fun findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId: UUID, userId: UUID): UserDevice?
 
 }

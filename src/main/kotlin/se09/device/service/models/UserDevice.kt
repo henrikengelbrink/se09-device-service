@@ -1,19 +1,20 @@
 package se09.device.service.models
 
+import java.util.*
 import javax.persistence.*
 
 @Entity
 @Table(name = "user_devices")
 class UserDevice(
         @Column(name = "device_id")
-        val deviceId: String = "",
+        open var deviceId: UUID,
 
         @Column(name = "user_id")
-        val userId: String = "",
+        open var userId: UUID,
 
         @Column(name = "hashed_password")
         val hashedPassword: String = ""
 ): BaseEntity() {
         @Enumerated(EnumType.STRING)
-        val status: DeviceStatus = DeviceStatus.ACTIVE
+        var status: DeviceStatus = DeviceStatus.ACTIVE
 }

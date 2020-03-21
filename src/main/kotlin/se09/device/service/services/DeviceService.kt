@@ -8,6 +8,7 @@ import se09.device.service.dto.UserDeviceDTO
 import se09.device.service.dto.VerneMQRegisterDTO
 import se09.device.service.models.Device
 import se09.device.service.models.DeviceCertificate
+import se09.device.service.models.DeviceStatus
 import se09.device.service.models.UserDevice
 import se09.device.service.repositories.DeviceCertificateRepository
 import se09.device.service.repositories.DeviceRepository
@@ -16,6 +17,7 @@ import se09.device.service.utils.RandomPassword
 import se09.device.service.ws.VaultService
 import java.io.File
 import java.time.Instant
+import java.util.*
 import javax.inject.Inject
 
 
@@ -41,7 +43,7 @@ class DeviceService {
     fun createDevice(): SystemFile {
         var device = Device()
         device = this.deviceRepository.save(device)
-        val certDTO = vaultService.generateCertificate(device.id)
+        val certDTO = vaultService.generateCertificate(device.id.toString())
 
         val path = "/tmp/${device.id}"
         val file = File(path)
@@ -58,13 +60,12 @@ class DeviceService {
                 requestId = certDTO.requestId,
                 serialNumber = certDTO.data.serialNumber,
                 expiration = certDTO.data.expiration
-
         )
         deviceCertificateRepository.save(deviceCert)
         val zipFile = certFileService.compressCertsToZipFile(
                 path = path,
                 data = certDTO.data,
-                deviceId = device.id
+                deviceId = device.id.toString()
         )
 
         return SystemFile(zipFile).attach("${device.id}.zip")
@@ -72,30 +73,24 @@ class DeviceService {
 
     fun claimUserDevice(userId: String, deviceId: String): UserDeviceDTO {
         LOG.warn("claimUserDevice")
-        val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = deviceId, userId = userId)
-        LOG.warn("userDevice ${userDevice?.id}")
+        val deviceUUID = UUID.fromString(deviceId)
+        val userUUID = UUID.fromString(userId)
+        val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = deviceUUID, userId = userUUID)
         if (userDevice != null) {
-            LOG.warn("userDevice ${userDevice.id} DELETE")
             userDevice.deletedAt = Instant.now()
-            LOG.warn("userDevice ${userDevice.id} date set")
+            userDevice.status = DeviceStatus.INVALID
             userDeviceRepository.save(userDevice)
-            LOG.warn("userDevice ${userDevice.id} DELETED !!!!")
         }
-        LOG.warn("userDevice PREEEE")
         val password = RandomPassword.randomPassword(20)
-        LOG.warn("userDevice $password")
         val hashedPassword: String = BCrypt.withDefaults().hashToString(12, password.toCharArray())
-        LOG.warn("hashedPassword $hashedPassword")
         val newUserDevice = UserDevice(
-                userId = userId,
-                deviceId = deviceId,
+                userId = userUUID,
+                deviceId = deviceUUID,
                 hashedPassword = hashedPassword
         )
-        LOG.warn("newUserDevice ${newUserDevice.id}")
         userDeviceRepository.save(newUserDevice)
-        LOG.warn("newUserDevice saved")
         return UserDeviceDTO(
-                userDeviceId = newUserDevice.id,
+                userDeviceId = newUserDevice.id.toString(),
                 password = password
         )
     }
