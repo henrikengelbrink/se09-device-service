@@ -15,6 +15,8 @@ class UserDevice(
         @Column(name = "hashed_password")
         val hashedPassword: String = ""
 ): BaseEntity() {
+
         @Enumerated(EnumType.STRING)
         var status: DeviceStatus = DeviceStatus.ACTIVE
+
 }

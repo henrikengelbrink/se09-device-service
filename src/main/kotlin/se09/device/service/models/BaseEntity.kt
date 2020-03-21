@@ -11,9 +11,9 @@ import javax.persistence.*
 abstract class BaseEntity {
 
     @Id
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid")
-    @Type(type="pg-uuid")
+    @GenericGenerator(name = "uuid-gen", strategy = "uuid2")
+    @GeneratedValue(generator = "uuid-gen")
+    @Type(type = "pg-uuid")
     open lateinit var id: UUID
 
     @Column(name = "updated_at")

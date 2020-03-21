@@ -74,21 +74,17 @@ class DeviceService {
     fun claimUserDevice(userId: String, deviceId: String): UserDeviceDTO {
         LOG.warn("claimUserDevice")
         val deviceUUID = UUID.fromString(deviceId)
-        LOG.warn("device $deviceId - $deviceUUID")
         val userUUID = UUID.fromString(userId)
-        LOG.warn("user $userId - $userUUID")
         val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = deviceUUID, userId = userUUID)
         if (userDevice != null) {
-            LOG.warn("userDevice ${userDevice.id} - ${userDevice.userId} - ${userDevice.deviceId}")
             if (userDevice.userId.toString() != userId) {
                 throw Exception()
             } else {
                 userDevice.deletedAt = Instant.now()
                 userDevice.status = DeviceStatus.INVALID
-                userDeviceRepository.save(userDevice)
+                userDeviceRepository.update(userDevice)
             }
         }
-        LOG.warn("deleted user")
         val password = RandomPassword.randomPassword(20)
         val hashedPassword: String = BCrypt.withDefaults().hashToString(12, password.toCharArray())
         var newUserDevice = UserDevice(
@@ -97,7 +93,6 @@ class DeviceService {
                 hashedPassword = hashedPassword
         )
         newUserDevice = userDeviceRepository.save(newUserDevice)
-        LOG.warn("newUserDevice ${newUserDevice.userId} - ${newUserDevice.deviceId} - ${newUserDevice.id}")
         return UserDeviceDTO(
                 userDeviceId = newUserDevice.id.toString(),
                 password = password
@@ -106,24 +101,17 @@ class DeviceService {
 
     fun credentialsValid(dto: VerneMQRegisterDTO): Boolean {
         val deviceId = dto.username.substringBefore(".engelbrink.dev")
-        LOG.info("deviceId $deviceId")
-        LOG.info("client_id ${dto.client_id}")
 
-        val userDeviceOptional = userDeviceRepository.findById(dto.client_id)
+        val clientUUID = UUID.fromString(dto.client_id)
+        val userDeviceOptional = userDeviceRepository.findById(clientUUID)
         if (!userDeviceOptional.isPresent) {
             return false
         }
         val userDevice = userDeviceOptional.get()
-        LOG.info("userDevice.id ${userDevice.id}")
-        LOG.info("userDevice.deviceId ${userDevice.deviceId}")
-        LOG.info("userDevice.userId ${userDevice.userId}")
-        LOG.info("userDevice.hashedPassword ${userDevice.hashedPassword}")
-        if (userDevice.deviceId.toString() != deviceId) {
+        if (userDevice.deviceId.toString() != deviceId || userDevice.status != DeviceStatus.ACTIVE) {
             return false
         }
-        LOG.info("PRE ###")
         val result: BCrypt.Result = BCrypt.verifyer().verify(dto.password.toCharArray(), userDevice.hashedPassword)
-        LOG.info("POST $result.verified")
         return result.verified
     }
 
