@@ -103,7 +103,7 @@ class DeviceService {
     fun credentialsValid(dto: VerneMQRegisterDTO): Boolean {
         return when(dto.clientType) {
             ClientType.DEVICE -> deviceCredentialsValid(dto)
-            ClientType.USER -> false // Todo
+            ClientType.USER -> true // Todo
         }
     }
 
