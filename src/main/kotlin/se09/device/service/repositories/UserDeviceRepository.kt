@@ -10,5 +10,6 @@ interface UserDeviceRepository : CrudRepository<UserDevice, UUID> {
 
     fun findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId: UUID, userId: UUID): UserDevice?
     fun update(entity: UserDevice): UserDevice?
+    fun findByUserId(userId: UUID): List<UserDevice>
 
 }

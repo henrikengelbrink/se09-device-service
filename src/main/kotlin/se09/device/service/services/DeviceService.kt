@@ -4,6 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import io.micronaut.http.server.types.files.SystemFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import se09.device.service.dto.DeviceListDTO
 import se09.device.service.dto.UserDeviceDTO
 import se09.device.service.dto.VerneMQRegisterDTO
 import se09.device.service.models.Device
@@ -112,6 +113,18 @@ class DeviceService {
         }
         val result: BCrypt.Result = BCrypt.verifyer().verify(dto.password.toCharArray(), userDevice.hashedPassword)
         return result.verified
+    }
+
+    fun getDevicesForUser(userId: String): List<DeviceListDTO> {
+        val userUUID = UUID.fromString(userId)
+        val devices = userDeviceRepository.findByUserId(userUUID)
+        val dtoList = mutableListOf<DeviceListDTO>()
+        for (device in devices) {
+            dtoList.add(DeviceListDTO(
+                    deviceId = device.id.toString()
+            ))
+        }
+        return dtoList.toList()
     }
 
 }
