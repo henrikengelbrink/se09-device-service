@@ -6,7 +6,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import se09.device.service.dto.DeviceListDTO
 import se09.device.service.dto.UserDeviceDTO
+import se09.device.service.dto.VerneMQEventDTO
 import se09.device.service.dto.VerneMQRegisterDTO
+import se09.device.service.models.ClientType
 import se09.device.service.models.Device
 import se09.device.service.models.DeviceCertificate
 import se09.device.service.models.UserDevice
@@ -99,14 +101,20 @@ class DeviceService {
     }
 
     fun credentialsValid(dto: VerneMQRegisterDTO): Boolean {
-        //val deviceId = dto.username.substringBefore(".engelbrink.dev")
+        return when(dto.clientType) {
+            ClientType.DEVICE -> deviceCredentialsValid(dto)
+            ClientType.USER -> false // Todo
+        }
+    }
+
+    private fun deviceCredentialsValid(dto: VerneMQRegisterDTO): Boolean {
         val clientUUID = UUID.fromString(dto.username)
         val userDeviceOptional = userDeviceRepository.findById(clientUUID)
         if (!userDeviceOptional.isPresent) {
             return false
         }
         val userDevice = userDeviceOptional.get()
-        if (userDevice.deviceId.toString() != dto.client_id || userDevice.deletedAt != null) {
+        if (userDevice.deviceId.toString() != dto.clientId || userDevice.deletedAt != null) {
             return false
         }
         val result: BCrypt.Result = BCrypt.verifyer().verify(dto.password.toCharArray(), userDevice.hashedPassword)
