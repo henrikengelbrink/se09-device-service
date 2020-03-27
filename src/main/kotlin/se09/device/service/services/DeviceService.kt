@@ -4,10 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import io.micronaut.http.server.types.files.SystemFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import se09.device.service.dto.DeviceListDTO
-import se09.device.service.dto.UserDeviceDTO
-import se09.device.service.dto.VerneMQEventDTO
-import se09.device.service.dto.VerneMQRegisterDTO
+import se09.device.service.dto.*
 import se09.device.service.models.ClientType
 import se09.device.service.models.Device
 import se09.device.service.models.DeviceCertificate
@@ -16,6 +13,7 @@ import se09.device.service.repositories.DeviceCertificateRepository
 import se09.device.service.repositories.DeviceRepository
 import se09.device.service.repositories.UserDeviceRepository
 import se09.device.service.utils.RandomPassword
+import se09.device.service.ws.UserService
 import se09.device.service.ws.VaultService
 import java.io.File
 import java.time.Instant
@@ -38,6 +36,9 @@ class DeviceService {
 
     @Inject
     private lateinit var vaultService: VaultService
+
+    @Inject
+    private lateinit var userService: UserService
 
     @Inject
     private lateinit var certFileService: CertFileService
@@ -103,7 +104,7 @@ class DeviceService {
     fun credentialsValid(dto: VerneMQRegisterDTO): Boolean {
         return when(dto.clientType) {
             ClientType.DEVICE -> deviceCredentialsValid(dto)
-            ClientType.USER -> true // Todo
+            ClientType.USER -> userCredentialsValid(dto)
         }
     }
 
@@ -119,6 +120,29 @@ class DeviceService {
         }
         val result: BCrypt.Result = BCrypt.verifyer().verify(dto.password.toCharArray(), userDevice.hashedPassword)
         return result.verified
+    }
+
+    private fun userCredentialsValid(dto: VerneMQRegisterDTO): Boolean {
+        val userId = userService.getUserIdFromToken(dto.password)
+        return userId != null
+    }
+
+    fun isAllowedToSubscribe(dto: VerneMQSubscribeDTO): Boolean {
+        return when(dto.clientType) {
+            ClientType.DEVICE -> deviceIsAllowedToSubscribe(dto)
+            ClientType.USER -> userIsAllowedToSubscribe(dto)
+        }
+    }
+
+    private fun deviceIsAllowedToSubscribe(dto: VerneMQSubscribeDTO): Boolean {
+        // return dto.deviceIdTopic() == dto.clientId
+        // Todo
+        return true
+    }
+
+    private fun userIsAllowedToSubscribe(dto: VerneMQSubscribeDTO): Boolean {
+        // Todo
+        return true
     }
 
     fun getDevicesForUser(userId: String): List<DeviceListDTO> {

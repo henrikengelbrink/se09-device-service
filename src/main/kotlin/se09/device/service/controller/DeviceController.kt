@@ -36,11 +36,15 @@ class DeviceController {
             @Header(value = "Authorization") authHeader: String
             //@Header(value = "X-User-Id") userId: String
     ): HttpResponse<UserDeviceDTO> {
+        LOG.warn("########### claimDevice $deviceId")
         val token = authHeader.substringAfter(" ")
         val userId = userService.getUserIdFromToken(token)
-        val userDeviceDTO = deviceService.claimUserDevice(userId, deviceId)
-        LOG.warn("########### claimDevice $deviceId")
-        return HttpResponse.ok(userDeviceDTO)
+        if (userId != null) {
+            val userDeviceDTO = deviceService.claimUserDevice(userId, deviceId)
+            return HttpResponse.ok(userDeviceDTO)
+        } else {
+            return HttpResponse.unauthorized()
+        }
     }
 
     @Get(produces = [MediaType.APPLICATION_JSON])
@@ -50,8 +54,12 @@ class DeviceController {
         LOG.warn("########### getDevicesForUser")
         val token = authHeader.substringAfter(" ")
         val userId = userService.getUserIdFromToken(token)
-        val devices = deviceService.getDevicesForUser(userId)
-        return HttpResponse.ok(devices)
+        if (userId != null) {
+            val devices = deviceService.getDevicesForUser(userId)
+            return HttpResponse.ok(devices)
+        } else {
+            return HttpResponse.unauthorized()
+        }
     }
 
 }

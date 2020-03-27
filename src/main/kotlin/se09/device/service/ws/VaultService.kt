@@ -18,7 +18,7 @@ class VaultService(
         @Inject val httpClient: RxHttpClient
 ) {
 
-    fun generateCertificate(clientId: String): VaultCertResponseDTO {
+    fun generateCertificate(deviceId: String): VaultCertResponseDTO {
         println("generateCertificate")
         val token = getVaultToken()
         println("######### VAULT TOKEN $token")
@@ -26,7 +26,7 @@ class VaultService(
         val hours = ttlSeconds / 3600
 
         val body = mapOf(
-                "common_name" to "$clientId.engelbrink.dev",
+                "common_name" to "$deviceId.device.engelbrink.dev",
                 "ttl" to "${hours}h"
         )
         val request = HttpRequest.POST("/v1/pki_int/issue/engelbrink-dev", body)

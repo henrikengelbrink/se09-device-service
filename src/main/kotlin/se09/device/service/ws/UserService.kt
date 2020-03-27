@@ -18,7 +18,7 @@ class UserService {
 
     private val LOG: Logger = LoggerFactory.getLogger(UserService::class.java)
 
-    fun getUserIdFromToken(token: String): String {
+    fun getUserIdFromToken(token: String): String? {
         LOG.info("getUserIdFromToken")
         val httpClient = RxHttpClient.create(URL(userServiceUrl))
         val payload = AuthenticationSessionDTO(
@@ -31,7 +31,7 @@ class UserService {
                 AuthenticationSessionDTO::class.java
         )
         val responseDTO = response.body()!!
-        return responseDTO.header.get("X-User-Id") as String
+        return responseDTO.header.get("X-User-Id") as String?
     }
 
 }
