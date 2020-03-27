@@ -42,18 +42,18 @@ class VerneMQController {
     @Post("/auth_on_subscribe", produces = [MediaType.APPLICATION_JSON])
     fun authOnSubscribe(@Body body: Map<String, Any>): Map<String, Any> {
         LOG.info("auth_on_subscribe -> $body")
-        //return mapOf("result" to "ok")
-        return mapOf(
-                "result" to mapOf(
-                    "error" to "not_allowed"
-                )
-//                "topics" to listOf(
-//                        mapOf(
-//                                "topic" to "test",
-//                                "qos" to 128
-//                        )
+        return mapOf("result" to "ok")
+//        return mapOf(
+//                "result" to mapOf(
+//                    "error" to "not_allowed"
 //                )
-        )
+////                "topics" to listOf(
+////                        mapOf(
+////                                "topic" to "test",
+////                                "qos" to 128
+////                        )
+////                )
+//        )
     }
 
     @Post("/auth_on_publish", produces = [MediaType.APPLICATION_JSON])
