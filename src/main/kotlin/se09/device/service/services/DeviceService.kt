@@ -135,7 +135,6 @@ class DeviceService {
     }
 
     private fun deviceIsAllowedToSubscribe(dto: VerneMQSubscribeDTO): Boolean {
-        // return dto.deviceIdTopic() == dto.clientId
         // Todo
         return true
     }
