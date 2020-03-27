@@ -100,15 +100,14 @@ class DeviceService {
     }
 
     fun credentialsValid(dto: VerneMQRegisterDTO): Boolean {
-        val deviceId = dto.username.substringBefore(".engelbrink.dev")
-
-        val clientUUID = UUID.fromString(dto.client_id)
+        //val deviceId = dto.username.substringBefore(".engelbrink.dev")
+        val clientUUID = UUID.fromString(dto.username)
         val userDeviceOptional = userDeviceRepository.findById(clientUUID)
         if (!userDeviceOptional.isPresent) {
             return false
         }
         val userDevice = userDeviceOptional.get()
-        if (userDevice.deviceId.toString() != deviceId || userDevice.status != DeviceStatus.ACTIVE) {
+        if (userDevice.deviceId.toString() != dto.client_id || userDevice.status != DeviceStatus.ACTIVE) {
             return false
         }
         val result: BCrypt.Result = BCrypt.verifyer().verify(dto.password.toCharArray(), userDevice.hashedPassword)
