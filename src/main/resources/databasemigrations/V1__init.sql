@@ -1,6 +1,5 @@
 CREATE TABLE devices (
     id uuid NOT NULL PRIMARY KEY,
-    status text NOT NULL DEFAULT 'ACTIVE',
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
@@ -20,7 +19,6 @@ CREATE TABLE device_certificates (
 
 CREATE TABLE user_devices (
     id uuid NOT NULL PRIMARY KEY,
-    status text NOT NULL DEFAULT 'ACTIVE',
     user_id uuid NOT NULL,
     device_id uuid NOT NULL,
     hashed_password text NOT NULL,

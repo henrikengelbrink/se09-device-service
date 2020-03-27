@@ -9,7 +9,6 @@ import se09.device.service.dto.UserDeviceDTO
 import se09.device.service.dto.VerneMQRegisterDTO
 import se09.device.service.models.Device
 import se09.device.service.models.DeviceCertificate
-import se09.device.service.models.DeviceStatus
 import se09.device.service.models.UserDevice
 import se09.device.service.repositories.DeviceCertificateRepository
 import se09.device.service.repositories.DeviceRepository
@@ -82,7 +81,6 @@ class DeviceService {
                 throw Exception()
             } else {
                 userDevice.deletedAt = Instant.now()
-                userDevice.status = DeviceStatus.INVALID
                 userDeviceRepository.update(userDevice)
             }
         }
@@ -108,7 +106,7 @@ class DeviceService {
             return false
         }
         val userDevice = userDeviceOptional.get()
-        if (userDevice.deviceId.toString() != dto.client_id || userDevice.status != DeviceStatus.ACTIVE) {
+        if (userDevice.deviceId.toString() != dto.client_id || userDevice.deletedAt != null) {
             return false
         }
         val result: BCrypt.Result = BCrypt.verifyer().verify(dto.password.toCharArray(), userDevice.hashedPassword)
@@ -117,7 +115,7 @@ class DeviceService {
 
     fun getDevicesForUser(userId: String): List<DeviceListDTO> {
         val userUUID = UUID.fromString(userId)
-        val devices = userDeviceRepository.findByUserIdAndStatus(userUUID, DeviceStatus.ACTIVE)
+        val devices = userDeviceRepository.findByUserIdAndDeletedAtIsNull(userUUID)
         val dtoList = mutableListOf<DeviceListDTO>()
         for (device in devices) {
             dtoList.add(DeviceListDTO(

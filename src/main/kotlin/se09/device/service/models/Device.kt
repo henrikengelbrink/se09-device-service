@@ -4,7 +4,4 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "devices")
-class Device: BaseEntity() {
-        @Enumerated(EnumType.STRING)
-        val status: DeviceStatus = DeviceStatus.ACTIVE
-}
+class Device: BaseEntity()
