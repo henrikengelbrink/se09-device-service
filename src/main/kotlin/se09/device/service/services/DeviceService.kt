@@ -117,7 +117,7 @@ class DeviceService {
 
     fun getDevicesForUser(userId: String): List<DeviceListDTO> {
         val userUUID = UUID.fromString(userId)
-        val devices = userDeviceRepository.findByUserId(userUUID)
+        val devices = userDeviceRepository.findByUserIdAndStatus(userUUID, DeviceStatus.ACTIVE)
         val dtoList = mutableListOf<DeviceListDTO>()
         for (device in devices) {
             dtoList.add(DeviceListDTO(
