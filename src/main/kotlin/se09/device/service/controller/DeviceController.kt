@@ -7,6 +7,7 @@ import io.micronaut.http.server.types.files.SystemFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import se09.device.service.dto.DeviceListDTO
+import se09.device.service.dto.MQTTRegisterDTO
 import se09.device.service.dto.UserDeviceDTO
 import se09.device.service.services.DeviceService
 import se09.device.service.ws.UserService
@@ -60,6 +61,16 @@ class DeviceController {
         } else {
             return HttpResponse.unauthorized()
         }
+    }
+
+    @Post(value = "/mqtt/auth", produces = [MediaType.APPLICATION_JSON])
+    fun handleMQTTRegister(
+            @Body body: MQTTRegisterDTO
+    ): HttpResponse<UserDeviceDTO> {
+        LOG.warn("########### handleMQTTRegister")
+        val valid = deviceService.mqttLoginValid(body)
+        return if(valid) HttpResponse.ok()
+        else HttpResponse.unauthorized()
     }
 
 }

@@ -99,4 +99,18 @@ class DeviceService {
         return dtoList.toList()
     }
 
+    fun mqttLoginValid(dto: MQTTRegisterDTO): Boolean {
+        val clientUUID = UUID.fromString(dto.username)
+        val userDeviceOptional = userDeviceRepository.findById(clientUUID)
+        if (!userDeviceOptional.isPresent) {
+            return false
+        }
+        val userDevice = userDeviceOptional.get()
+        if (userDevice.deviceId.toString() != dto.clientId || userDevice.deletedAt != null) {
+            return false
+        }
+        val result: BCrypt.Result = BCrypt.verifyer().verify(dto.password.toCharArray(), userDevice.hashedPassword)
+        return result.verified
+    }
+
 }
