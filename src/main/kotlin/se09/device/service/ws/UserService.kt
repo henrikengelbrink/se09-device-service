@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class UserService {
 
-    @Value("\${user.service.url}")
+    @Value("\${service.url.user}")
     private lateinit var userServiceUrl: String
 
     private val LOG: Logger = LoggerFactory.getLogger(UserService::class.java)

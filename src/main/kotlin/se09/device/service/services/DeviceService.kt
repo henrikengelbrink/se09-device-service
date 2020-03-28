@@ -7,14 +7,12 @@ import org.slf4j.LoggerFactory
 import se09.device.service.dto.*
 import se09.device.service.models.ClientType
 import se09.device.service.models.Device
-import se09.device.service.models.DeviceCertificate
 import se09.device.service.models.UserDevice
-import se09.device.service.repositories.DeviceCertificateRepository
 import se09.device.service.repositories.DeviceRepository
 import se09.device.service.repositories.UserDeviceRepository
 import se09.device.service.utils.RandomPassword
+import se09.device.service.ws.CertService
 import se09.device.service.ws.UserService
-import se09.device.service.ws.VaultService
 import java.io.File
 import java.time.Instant
 import java.util.*
@@ -32,13 +30,10 @@ class DeviceService {
     private lateinit var userDeviceRepository: UserDeviceRepository
 
     @Inject
-    private lateinit var deviceCertificateRepository: DeviceCertificateRepository
-
-    @Inject
-    private lateinit var vaultService: VaultService
-
-    @Inject
     private lateinit var userService: UserService
+
+    @Inject
+    private lateinit var certService: CertService
 
     @Inject
     private lateinit var certFileService: CertFileService
@@ -46,8 +41,10 @@ class DeviceService {
     fun createDevice(): SystemFile {
         var device = Device()
         device = this.deviceRepository.save(device)
-        val certDTO = vaultService.generateCertificate(device.id.toString())
-
+        val certDTO = certService.createCert(
+                clientId = device.id.toString(),
+                clientType = ClientType.DEVICE
+        )
         val path = "/tmp/${device.id}"
         val file = File(path)
         if (!file.exists()) {
@@ -57,17 +54,10 @@ class DeviceService {
                 println("Failed to create directory!")
             }
         }
-
-        val deviceCert = DeviceCertificate(
-                deviceId = device.id,
-                requestId = certDTO.requestId,
-                serialNumber = certDTO.data.serialNumber,
-                expiration = certDTO.data.expiration
-        )
-        deviceCertificateRepository.save(deviceCert)
         val zipFile = certFileService.compressCertsToZipFile(
                 path = path,
-                data = certDTO.data,
+                certificate = certDTO.certificate,
+                privateKey = certDTO.key,
                 deviceId = device.id.toString()
         )
 
@@ -124,7 +114,7 @@ class DeviceService {
 
     private fun userCredentialsValid(dto: VerneMQRegisterDTO): Boolean {
         val userId = userService.getUserIdFromToken(dto.password)
-        return userId != null
+        return userId != null && userId == dto.clientId
     }
 
     fun isAllowedToSubscribe(dto: VerneMQSubscribeDTO): Boolean {

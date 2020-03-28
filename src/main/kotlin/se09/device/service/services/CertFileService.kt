@@ -1,6 +1,5 @@
 package se09.device.service.services
 
-import se09.device.service.dto.VaultCertResponseDataDTO
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -11,9 +10,9 @@ import javax.inject.Singleton
 @Singleton
 class CertFileService {
 
-    fun compressCertsToZipFile(path: String, data: VaultCertResponseDataDTO, deviceId: String): File {
-        saveCertFile(path, "client.crt", data.certificate + "\n")
-        saveCertFile(path, "client.key", data.privateKey + "\n")
+    fun compressCertsToZipFile(path: String, certificate: String, privateKey: String, deviceId: String): File {
+        saveCertFile(path, "client.crt", certificate + "\n")
+        saveCertFile(path, "client.key", privateKey + "\n")
 
         val certFiles = listOf("$path/client.crt", "$path/client.key", "/vault/secrets/chain.crt")
         return createZip(certFiles, path, deviceId)

@@ -3,11 +3,6 @@ micronaut:
     name: se09-device-service
   server:
     port: 7979
-  http:
-    services:
-      vault:
-        urls:
-          - ${VAULT_URL}
 datasources:
   default:
     url: ${POSTGRES_HOST}
@@ -30,6 +25,7 @@ flyway:
     default:
       locations: classpath:databasemigrations
 
-user:
-  service:
-    url: ${USER_SERVICE_URL}
+service:
+  url:
+    user: ${USER_SERVICE_URL}
+    cert: ${CERT_SERVICE_URL}
