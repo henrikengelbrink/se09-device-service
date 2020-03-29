@@ -39,7 +39,9 @@ class MQTTController {
     ): HttpResponse<Any> {
         LOG.warn("########### handleMQTTTopic")
         val userId = userService.getUserIdFromUserClientId(body.clientId)
+        LOG.warn("########### handleMQTTTopic userId:$userId")
         val devices = deviceService.getDevicesForUser(userId)
+        LOG.warn("########### devices:$devices")
         var valid = false
         for (device in devices) {
             if (device.deviceId == body.topic) {
