@@ -37,18 +37,20 @@ class MQTTController {
     fun handleMQTTTopic(
             @Body body: MQTTTopicDTO
     ): HttpResponse<Any> {
-        LOG.warn("########### handleMQTTTopic")
+        LOG.warn("########### handleMQTTTopic ${body.topic}")
         val userId = userService.getUserIdFromUserClientId(body.clientId)
         LOG.warn("########### handleMQTTTopic userId:$userId")
         val devices = deviceService.getDevicesForUser(userId)
         LOG.warn("########### devices:$devices")
         var valid = false
         for (device in devices) {
+            LOG.warn("${device.deviceId} - ${body.topic} - ${device.deviceId == body.topic}")
             if (device.deviceId == body.topic) {
                 valid = true
                 break
             }
         }
+        LOG.warn("VALID $valid")
         return if(valid) HttpResponse.ok()
         else HttpResponse.unauthorized()
     }
