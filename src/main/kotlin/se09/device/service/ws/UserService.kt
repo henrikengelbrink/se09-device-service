@@ -34,4 +34,12 @@ class UserService {
         return responseDTO.header.get("X-User-Id") as String?
     }
 
+    fun getUserIdFromUserClientId(userClientId: String): String {
+        LOG.info("getUserIdFromUserClientId")
+        val httpClient = RxHttpClient.create(URL(userServiceUrl))
+        val userId = httpClient.toBlocking().retrieve("/users/client/$userClientId}")
+        LOG.info("getUserIdFromUserClientId $userId")
+        return userId
+    }
+
 }
