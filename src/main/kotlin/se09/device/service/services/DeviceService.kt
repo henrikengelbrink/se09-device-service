@@ -89,7 +89,7 @@ class DeviceService {
 
     fun getDevicesForUser(userId: String): List<DeviceListDTO> {
         val userUUID = UUID.fromString(userId)
-        val devices = deviceRepository.findByUserIdAndDeletedAtIsNull(userUUID)
+        val devices = userDeviceRepository.findByUserIdAndDeletedAtIsNull(userUUID)
         val dtoList = mutableListOf<DeviceListDTO>()
         for (device in devices) {
             dtoList.add(DeviceListDTO(
