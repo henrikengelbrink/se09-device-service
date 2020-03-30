@@ -3,8 +3,6 @@ package se09.device.service.controller
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.*
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import se09.device.service.dto.MQTTRegisterDTO
 import se09.device.service.dto.MQTTTopicDTO
 import se09.device.service.dto.UserDeviceDTO
@@ -14,8 +12,6 @@ import javax.inject.Inject
 
 @Controller("/mqtt")
 class MQTTController {
-
-    private val LOG: Logger = LoggerFactory.getLogger(MQTTController::class.java)
 
     @Inject
     private lateinit var deviceService: DeviceService
@@ -27,7 +23,6 @@ class MQTTController {
     fun handleMQTTRegister(
             @Body body: MQTTRegisterDTO
     ): HttpResponse<UserDeviceDTO> {
-        LOG.warn("########### handleMQTTRegister")
         val valid = deviceService.mqttLoginValid(body)
         return if(valid) HttpResponse.ok()
         else HttpResponse.unauthorized()
@@ -37,20 +32,15 @@ class MQTTController {
     fun handleMQTTTopic(
             @Body body: MQTTTopicDTO
     ): HttpResponse<Any> {
-        LOG.warn("########### handleMQTTTopic ${body.topic}")
         val userId = userService.getUserIdFromUserClientId(body.clientId)
-        LOG.warn("########### handleMQTTTopic userId:$userId")
         val devices = deviceService.getDevicesForUser(userId)
-        LOG.warn("########### devices:$devices")
         var valid = false
         for (device in devices) {
-            LOG.warn("${device.deviceId} - ${body.topic} - ${device.deviceId == body.topic}")
             if (device.deviceId == body.topic) {
                 valid = true
                 break
             }
         }
-        LOG.warn("VALID $valid")
         return if(valid) HttpResponse.ok()
         else HttpResponse.unauthorized()
     }

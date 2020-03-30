@@ -2,9 +2,9 @@ package se09.device.service.services
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import io.micronaut.http.server.types.files.SystemFile
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import se09.device.service.dto.*
+import se09.device.service.exceptions.APIException
+import se09.device.service.exceptions.APIExceptionCode
 import se09.device.service.models.ClientType
 import se09.device.service.models.Device
 import se09.device.service.models.UserDevice
@@ -19,8 +19,6 @@ import javax.inject.Inject
 
 
 class DeviceService {
-
-    private val LOG: Logger = LoggerFactory.getLogger(DeviceService::class.java)
 
     @Inject
     private lateinit var deviceRepository: DeviceRepository
@@ -44,10 +42,8 @@ class DeviceService {
         val path = "/tmp/${device.id}"
         val file = File(path)
         if (!file.exists()) {
-            if (file.mkdir()) {
-                println("Directory is created!")
-            } else {
-                println("Failed to create directory!")
+            if (!file.mkdir()) {
+                throw APIException(APIExceptionCode.CERT_DIR_ERROR)
             }
         }
         val zipFile = certFileService.compressCertsToZipFile(
@@ -61,7 +57,6 @@ class DeviceService {
     }
 
     fun claimUserDevice(userId: String, deviceId: String): UserDeviceDTO {
-        LOG.warn("claimUserDevice")
         val deviceUUID = UUID.fromString(deviceId)
         val userUUID = UUID.fromString(userId)
         val userDevice = userDeviceRepository.findByDeviceIdAndUserIdAndDeletedAtIsNull(deviceId = deviceUUID, userId = userUUID)
